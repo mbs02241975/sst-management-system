@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de ASO - Sistema de Gestão de SST{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="fas fa-file-medical"></i> Gestão de ASO (Atestado de Saúde Ocupacional)</h1>
+        <button class="btn btn-primary" onclick="toggleForm('form-aso')"><i class="fas fa-plus"></i> Novo ASO</button>
+    </div>
+    
+    <div id="form-aso" class="form-container hidden">
+        <h2>Registrar Novo ASO</h2>
+        <form method="POST" class="form-main">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="matricula_funcionario">Matrícula do Funcionário *</label>
+                    <input type="text" id="matricula_funcionario" name="matricula_funcionario" required placeholder="Ex: 001234">
+                </div>
+                <div class="form-group">
+                    <label for="nome_funcionario">Nome do Funcionário *</label>
+                    <input type="text" id="nome_funcionario" name="nome_funcionario" required placeholder="Nome completo">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo_aso">Tipo de ASO *</label>
+                    <select id="tipo_aso" name="tipo_aso" required>
+                        <option value="">Selecione...</option>
+                        <option value="admissional">Admissional</option>
+                        <option value="periodico">Periódico</option>
+                        <option value="demissional">Demissional</option>
+                        <option value="retorno">Retorno</option>
+                        <option value="mudanca_funcao">Mudança de Função</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data_realizacao">Data da Realização *</label>
+                    <input type="date" id="data_realizacao" name="data_realizacao" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="resultado">Resultado</label>
+                    <select id="resultado" name="resultado">
+                        <option value="">Selecione...</option>
+                        <option value="apto">Apto</option>
+                        <option value="inapto">Inapto</option>
+                        <option value="apto_com_restricoes">Apto com Restrições</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data_proxima_revisao">Data da Próxima Revisão</label>
+                    <input type="date" id="data_proxima_revisao" name="data_proxima_revisao">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="medico_responsavel">Médico Responsável</label>
+                    <input type="text" id="medico_responsavel" name="medico_responsavel" placeholder="Nome do médico">
+                </div>
+                <div class="form-group">
+                    <label for="crm">CRM</label>
+                    <input type="text" id="crm" name="crm" placeholder="CRM do médico">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="observacoes">Observações</label>
+                <textarea id="observacoes" name="observacoes" rows="3" placeholder="Observações adicionais"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleForm('form-aso')"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <h2>ASOs Registrados</h2>
+        {% if asos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Matrícula</th>
+                    <th>Funcionário</th>
+                    <th>Tipo</th>
+                    <th>Data</th>
+                    <th>Resultado</th>
+                    <th>Próxima Revisão</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aso in asos %}
+                <tr>
+                    <td>{{ aso.matricula_funcionario }}</td>
+                    <td>{{ aso.nome_funcionario }}</td>
+                    <td>{{ aso.tipo_aso }}</td>
+                    <td>{{ aso.data_realizacao.strftime('%d/%m/%Y') }}</td>
+                    <td><span class="badge badge-{{ aso.resultado }}">{{ aso.resultado }}</span></td>
+                    <td>{% if aso.data_proxima_revisao %}{{ aso.data_proxima_revisao.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Ver</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">Nenhum ASO registrado ainda.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        form.classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

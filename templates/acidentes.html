@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Investigação de Acidentes/Incidentes - Sistema de Gestão de SST{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="fas fa-exclamation-triangle"></i> Investigação de Acidentes/Incidentes</h1>
+        <button class="btn btn-primary" onclick="toggleForm('form-acidente')"><i class="fas fa-plus"></i> Novo Registro</button>
+    </div>
+    
+    <div id="form-acidente" class="form-container hidden">
+        <h2>Registrar Novo Acidente/Incidente</h2>
+        <form method="POST" class="form-main">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="data_ocorrencia">Data e Hora da Ocorrência *</label>
+                    <input type="datetime-local" id="data_ocorrencia" name="data_ocorrencia" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo">Tipo *</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="acidente">Acidente</option>
+                        <option value="incidente">Incidente</option>
+                        <option value="quase_acidente">Quase Acidente</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="local">Local da Ocorrência *</label>
+                    <input type="text" id="local" name="local" required placeholder="Local específico">
+                </div>
+                <div class="form-group">
+                    <label for="responsavel_investigacao">Responsável pela Investigação</label>
+                    <input type="text" id="responsavel_investigacao" name="responsavel_investigacao" placeholder="Nome do investigador">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="descricao">Descrição do Ocorrido *</label>
+                <textarea id="descricao" name="descricao" rows="4" required placeholder="Descreva detalhadamente o que aconteceu"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="envolvidos">Pessoas Envolvidas</label>
+                <textarea id="envolvidos" name="envolvidos" rows="2" placeholder="Liste as pessoas envolvidas"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="lesoes">Lesões/Danos</label>
+                <textarea id="lesoes" name="lesoes" rows="2" placeholder="Descreva as lesões ou danos causados"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="causa_raiz">Causa Raiz (Análise)</label>
+                <textarea id="causa_raiz" name="causa_raiz" rows="3" placeholder="Análise da causa raiz"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="medidas_corretivas">Medidas Corretivas</label>
+                <textarea id="medidas_corretivas" name="medidas_corretivas" rows="3" placeholder="Medidas a serem tomadas"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="aberto">Aberto</option>
+                    <option value="em_análise">Em Análise</option>
+                    <option value="fechado">Fechado</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleForm('form-acidente')"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <h2>Acidentes/Incidentes Registrados</h2>
+        {% if acidentes %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Local</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Investigador</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for acidente in acidentes %}
+                <tr>
+                    <td>{{ acidente.data_ocorrencia.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td><span class="badge badge-{{ acidente.tipo }}">{{ acidente.tipo }}</span></td>
+                    <td>{{ acidente.local }}</td>
+                    <td>{{ acidente.descricao[:50] }}...</td>
+                    <td><span class="badge badge-{{ acidente.status }}">{{ acidente.status }}</span></td>
+                    <td>{{ acidente.responsavel_investigacao or '-' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Ver</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">Nenhum acidente/incidente registrado.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        form.classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

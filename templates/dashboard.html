@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Gestão de SST{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+    
+    <div class="welcome-section">
+        <h2>Bem-vindo, {{ session.username }}!</h2>
+        <p>Aqui você pode acompanhar um resumo das suas atividades de SST.</p>
+    </div>
+    
+    <div class="cards-grid">
+        <div class="card card-treinamentos">
+            <div class="card-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="card-content">
+                <h3>Treinamentos</h3>
+                <p class="card-number">{{ total_treinamentos }}</p>
+                <a href="{{ url_for('treinamentos') }}" class="card-link">Ver detalhes →</a>
+            </div>
+        </div>
+        
+        <div class="card card-asos">
+            <div class="card-icon">
+                <i class="fas fa-file-medical"></i>
+            </div>
+            <div class="card-content">
+                <h3>ASOs</h3>
+                <p class="card-number">{{ total_asos }}</p>
+                <a href="{{ url_for('asos') }}" class="card-link">Ver detalhes →</a>
+            </div>
+        </div>
+        
+        <div class="card card-acidentes">
+            <div class="card-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="card-content">
+                <h3>Acidentes/Incidentes</h3>
+                <p class="card-number">{{ total_acidentes }}</p>
+                {% if acidentes_abertos > 0 %}
+                <p class="card-alert"><strong>{{ acidentes_abertos }}</strong> abertos</p>
+                {% endif %}
+                <a href="{{ url_for('acidentes') }}" class="card-link">Ver detalhes →</a>
+            </div>
+        </div>
+        
+        <div class="card card-conformidades">
+            <div class="card-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="card-content">
+                <h3>Não Conformidades</h3>
+                <p class="card-number">{{ total_nao_conformidades }}</p>
+                {% if nao_conformidades_abertas > 0 %}
+                <p class="card-alert"><strong>{{ nao_conformidades_abertas }}</strong> abertas</p>
+                {% endif %}
+                <a href="{{ url_for('nao_conformidades') }}" class="card-link">Ver detalhes →</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-section">
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> Sobre o Sistema</h3>
+            <p>O Sistema de Gestão de SST foi desenvolvido para auxiliar pequenas e médias empresas na gestão de Saúde e Segurança do Trabalho. 
+            Com este sistema, você pode gerenciar treinamentos, ASOs, investigar acidentes e incidentes, cadastrar não conformidades e acompanhar planos de ação.</p>
+        </div>
+        
+        <div class="info-box">
+            <h3><i class="fas fa-phone"></i> Suporte Técnico</h3>
+            <p><strong>Desenvolvedor:</strong> Máximo Batista</p>
+            <p><strong>Telefone:</strong> (71)98286-2569</p>
+            <p><strong>E-mail:</strong> mbs1975@hotmail.com</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
