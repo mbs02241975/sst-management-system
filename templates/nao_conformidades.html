@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Não Conformidades - Sistema de Gestão de SST{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="fas fa-check-circle"></i> Cadastro de Não Conformidades</h1>
+        <button class="btn btn-primary" onclick="toggleForm('form-nc')"><i class="fas fa-plus"></i> Nova NC</button>
+    </div>
+    
+    <div id="form-nc" class="form-container hidden">
+        <h2>Registrar Nova Não Conformidade</h2>
+        <form method="POST" class="form-main">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="titulo">Título *</label>
+                    <input type="text" id="titulo" name="titulo" required placeholder="Título da não conformidade">
+                </div>
+                <div class="form-group">
+                    <label for="area">Área</label>
+                    <input type="text" id="area" name="area" placeholder="Departamento/Área">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="data_identificacao">Data de Identificação *</label>
+                    <input type="date" id="data_identificacao" name="data_identificacao" required>
+                </div>
+                <div class="form-group">
+                    <label for="severidade">Severidade *</label>
+                    <select id="severidade" name="severidade" required>
+                        <option value="">Selecione...</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                        <option value="critica">Crítica</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsavel">Responsável</label>
+                    <input type="text" id="responsavel" name="responsavel" placeholder="Nome do responsável">
+                </div>
+                <div class="form-group">
+                    <label for="data_limite">Data Limite para Correção</label>
+                    <input type="date" id="data_limite" name="data_limite">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="descricao">Descrição Detalhada *</label>
+                <textarea id="descricao" name="descricao" rows="4" required placeholder="Descreva a não conformidade em detalhes"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="aberta">Aberta</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="fechada">Fechada</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleForm('form-nc')"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <h2>Não Conformidades Registradas</h2>
+        {% if nao_conformidades %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Título</th>
+                    <th>Área</th>
+                    <th>Data Ident.</th>
+                    <th>Severidade</th>
+                    <th>Status</th>
+                    <th>Responsável</th>
+                    <th>Data Limite</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nc in nao_conformidades %}
+                <tr>
+                    <td><strong>{{ nc.numero }}</strong></td>
+                    <td>{{ nc.titulo }}</td>
+                    <td>{{ nc.area or '-' }}</td>
+                    <td>{{ nc.data_identificacao.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <span class="badge badge-{{ nc.severidade }}">
+                            {% if nc.severidade == 'critica' %}🔴{% elif nc.severidade == 'alta' %}🟠{% elif nc.severidade == 'media' %}🟡{% else %}🟢{% endif %}
+                            {{ nc.severidade }}
+                        </span>
+                    </td>
+                    <td><span class="badge badge-{{ nc.status }}">{{ nc.status }}</span></td>
+                    <td>{{ nc.responsavel or '-' }}</td>
+                    <td>{% if nc.data_limite %}{{ nc.data_limite.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Ver</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">Nenhuma não conformidade registrada.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        form.classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

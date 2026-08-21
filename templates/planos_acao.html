@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Planos de Ação - Sistema de Gestão de SST{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="fas fa-tasks"></i> Planos de Ação</h1>
+        <button class="btn btn-primary" onclick="toggleForm('form-plano')"><i class="fas fa-plus"></i> Novo Plano</button>
+    </div>
+    
+    <div id="form-plano" class="form-container hidden">
+        <h2>Registrar Novo Plano de Ação</h2>
+        <form method="POST" class="form-main">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nao_conformidade_id">Não Conformidade *</label>
+                    <select id="nao_conformidade_id" name="nao_conformidade_id" required>
+                        <option value="">Selecione uma NC...</option>
+                        {% for nc in nao_conformidades %}
+                        <option value="{{ nc.id }}">{{ nc.numero }} - {{ nc.titulo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="responsavel">Responsável *</label>
+                    <input type="text" id="responsavel" name="responsavel" required placeholder="Nome do responsável">
+                </div>
+                <div class="form-group">
+                    <label for="data_limite">Data Limite *</label>
+                    <input type="date" id="data_limite" name="data_limite" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="acao">Ação a Realizar *</label>
+                <textarea id="acao" name="acao" rows="4" required placeholder="Descreva a ação a ser realizada para corrigir a não conformidade"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="evidencia">Evidência de Conclusão</label>
+                <textarea id="evidencia" name="evidencia" rows="3" placeholder="Descreva como será comprovada a conclusão da ação"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="planejado">Planejado</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="concluido">Concluído</option>
+                    <option value="atrasado">Atrasado</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleForm('form-plano')"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="table-container">
+        <h2>Planos de Ação Registrados</h2>
+        {% if planos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>NC Associada</th>
+                    <th>Ação</th>
+                    <th>Responsável</th>
+                    <th>Data Limite</th>
+                    <th>Data Conclusão</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plano in planos %}
+                <tr>
+                    <td>
+                        {% set nc = nao_conformidades | selectattr('id', 'equalto', plano.nao_conformidade_id) | list %}
+                        {% if nc %}
+                            <strong>{{ nc[0].numero }}</strong><br/>
+                            <small>{{ nc[0].titulo }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ plano.acao[:60] }}...</td>
+                    <td>{{ plano.responsavel }}</td>
+                    <td>{{ plano.data_limite.strftime('%d/%m/%Y') }}</td>
+                    <td>{% if plano.data_conclusao %}{{ plano.data_conclusao.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                    <td>
+                        <span class="badge badge-{{ plano.status }}">
+                            {% if plano.status == 'concluido' %}✓{% elif plano.status == 'atrasado' %}⚠️{% elif plano.status == 'em_andamento' %}⧳{% endif %}
+                            {{ plano.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Ver</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">Nenhum plano de ação registrado.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        form.classList.toggle('hidden');
+    }
+</script>
+{% endblock %}
